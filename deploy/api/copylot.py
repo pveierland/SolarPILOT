@@ -2,6 +2,7 @@ import sys, os
 import pandas as pd
 from ctypes import *
 c_number = c_double   #must be either c_double or c_float depending on copilot.h definition
+from pathlib import Path
 
 @CFUNCTYPE(c_int, c_number, c_char_p)
 def api_callback(fprogress, msg):
@@ -98,14 +99,14 @@ class CoPylot:
     """
 
     def __init__(self):
-        cwd = os.getcwd()
+        library_dir = Path(__file__).resolve().parent
         if sys.platform == 'win32' or sys.platform == 'cygwin':
             #self.pdll = CDLL("C:/Users/WHamilt2/Documents/solarPILOT_build/SolarPILOT/build_vs2017/build/Debug/x64/solarpilot.dll") # for debugging
-            self.pdll = CDLL(cwd + "/solarpilot.dll")
+            self.pdll = CDLL(str(library_dir / "solarpilot.dll"))
         elif sys.platform == 'darwin':
-            self.pdll = CDLL(cwd + "/solarpilot.dylib")  # Never tested
-        elif sys.platform == 'linux2':
-            self.pdll = CDLL(cwd +"/solarpilot.so")  # Never tested
+            self.pdll = CDLL(str(library_dir / "solarpilot.dylib"))  # Never tested
+        elif sys.platform == 'linux':
+            self.pdll = CDLL(str(library_dir / "solarpilot.so"))  # Never tested
         else:
             print( 'Platform not supported ', sys.platform)
 
